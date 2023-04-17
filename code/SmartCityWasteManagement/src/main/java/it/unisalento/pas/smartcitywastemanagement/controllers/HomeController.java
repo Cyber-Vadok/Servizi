@@ -22,8 +22,8 @@ public class HomeController {
     @RequestMapping("/home")
     public String home(){
 
-        mySQLDBConnection.connetti();
-        mongoDBConnection.connetti();
+        mySQLDBConnection.connect();
+        mongoDBConnection.connect();
         tcpProtocol.initialize();
         return "home";
     }
