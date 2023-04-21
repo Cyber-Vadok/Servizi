@@ -6,6 +6,7 @@ import it.unisalento.pas.smartcitywastemanagement.exceptions.UserNotFoundExcepti
 import it.unisalento.pas.smartcitywastemanagement.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
@@ -17,7 +18,7 @@ import java.util.Optional;
  */
 
 @RestController
-@RequestMapping("/api/users")           // per mappare in "/api/users/" le visualizzazioni che rappresentano gli users
+@RequestMapping("/api/users")  // per mappare in "/api/users/" le visualizzazioni che rappresentano gli users
 public class UserRestController {
 
     @Autowired
@@ -52,6 +53,7 @@ public class UserRestController {
      * @return dell'utente corrispondete all'id passato come parametro
      * @throws UserNotFoundException
      */
+    @PreAuthorize("hasRole('ADMIN')") // per far accedere all'URI sono chi ha role=ADMIN
     @RequestMapping(value="/{id}", method=RequestMethod.GET) // per mappare la GET di uno user tramite l'id
                                                                 // presente nei parametri (@PathVariable) in ".../{id}"
     public UserDTO get(@PathVariable String id) throws UserNotFoundException {
