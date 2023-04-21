@@ -3,6 +3,11 @@ package it.unisalento.pas.smartcitywastemanagement.domain;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
+/**
+ * classe definita come documento chiamato "user" (riga per le tabelle degli SQL) di MongoDB) (@Document)
+ * (entità che voglio rappresentare nel db)
+ */
+
 @Document("user")
 public class User {
 

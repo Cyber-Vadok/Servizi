@@ -2,6 +2,11 @@ package it.unisalento.pas.smartcitywastemanagement.dto;
 
 import org.springframework.data.annotation.Id;
 
+/**
+ * classe per quello che voglio trasmettere di quell'entità (user) dato che non sempre volgio salvare tutto di
+ * un'entità e nello stesso formato
+ */
+
 public class UserDTO {
 
     @Id
