@@ -4,32 +4,21 @@ services:
 
   rabbitmq:
     image: rabbitmq:management
+    hostname: rabbit-host
     ports:
       - 5672:5672
       - 15672:15672
     environment:
       - RABBITMQ_DEFAULT_USER=admin
       - RABBITMQ_DEFAULT_PASS=admin
-#    networks:
-#      a01_ext:
-#        ipv4_address: 10.5.0.5
+    networks:
+      - receiver-net
 
   receiver:
     image: receiver-spring-rabbitmq:1.0
-#    networks:
-#      a00_ext:
-#        ipv4_address: 192.168.123.123
+    networks:
+      a00_ext:
 
-#networks:
-#  a00_ext:
-#    driver: bridge
-#    ipam:
-#      driver: default
-#      config:
-#        - subnet: 192.168.123.0/24
-#  a01_ext:
-#    driver: bridge
-#    ipam:
-#      config:
-#        - subnet: 10.5.0.0/16
-#          gateway: 10.5.0.1
+networks:
+  receiver-net:
+    driver: bridge
