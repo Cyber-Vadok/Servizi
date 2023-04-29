@@ -17,7 +17,7 @@ import org.springframework.security.web.SecurityFilterChain;
  * classe per gestire la sicurezza degli endpoint
  */
 @Configuration
-@EnableMethodSecurity
+@EnableMethodSecurity(prePostEnabled = true)
 public class SecurityConfig {
 
     /**

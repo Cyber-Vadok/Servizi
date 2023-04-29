@@ -53,7 +53,7 @@ public class UserRestController {
      * @return dell'utente corrispondete all'id passato come parametro
      * @throws UserNotFoundException
      */
-    @PreAuthorize("hasRole('ADMIN')") // per far accedere all'URI sono chi ha role=ADMIN
+    @PreAuthorize("hasAnyRole('ADMIN')") // per far accedere all'URI sono chi ha role=ADMIN
     @RequestMapping(value="/{id}", method=RequestMethod.GET) // per mappare la GET di uno user tramite l'id
                                                                 // presente nei parametri (@PathVariable) in ".../{id}"
     public UserDTO get(@PathVariable String id) throws UserNotFoundException {
@@ -63,17 +63,30 @@ public class UserRestController {
         Optional<User> optUser = userRepository.findById(id); // cerco nel db l'utente con l'id passato come parametro
 
         if(optUser.isPresent()){                              // se è stato trovato lo restituisce (in questo caso è mock)
-            // mock:
+            User user = optUser.get();
+
             UserDTO user1 = new UserDTO();
-            user1.setName("Jhonny");
-            user1.setSurname("Stecchino");
-            user1.setEmail("jhonnystecchino@sium.com");
-            user1.setAge(69);
+            user1.setName(user.getName());
+            user1.setSurname(user.getSurname());
+            user1.setEmail(user.getEmail());
+            user1.setAge(user.getAge());
+            user1.setId(user.getId());
 
             return user1;
         }
+        else {
+            //throw new UserNotFoundException();
 
-        throw new UserNotFoundException();
+            UserDTO user1 = new UserDTO();
+            
+            user1.setName("ciao");
+            user1.setSurname("ciao");
+            user1.setEmail("ciao");
+            user1.setAge(40);
+            user1.setId("ciao");
+
+            return user1;
+        }
     }
 
     /**
