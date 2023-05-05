@@ -11,11 +11,13 @@ public class Configuration {
 
     @Bean
     public IoTprotocol mqttProtocol() {
-        return new MQTTprotocol();          // nuova istanza di MQTTprotocol
+        // nuova istanza di MQTTprotocol
+        return new MQTTprotocol();
     }
 
     @Bean
     public IoTprotocol tcpProtocol() {
-        return new TCPprotocol();           // nuova istanza di TCPprotocol
+        // nuova istanza di TCPprotocol
+        return new TCPprotocol();
     }
 }

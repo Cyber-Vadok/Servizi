@@ -1,17 +1,20 @@
 package it.unisalento.pas.smartcitywastemanagement.configuration;
 
+import it.unisalento.pas.smartcitywastemanagement.security.JwtAuthenticationFilter;
+import it.unisalento.pas.smartcitywastemanagement.service.CustomUserDetailsService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.security.config.Customizer;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
+import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.core.userdetails.User;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 /**
  * classe per gestire la sicurezza degli endpoint
@@ -19,6 +22,9 @@ import org.springframework.security.web.SecurityFilterChain;
 @Configuration
 @EnableMethodSecurity(prePostEnabled = true)
 public class SecurityConfig {
+
+    @Autowired
+    public CustomUserDetailsService customUserDetailsService;
 
     /**
      * metodo per cryptare le password
@@ -30,6 +36,17 @@ public class SecurityConfig {
     }
 
     /**
+     * classe per estrapolare l'authentication manager dalla configuration
+     * @param authenticationConfiguration
+     * @return authentication manager
+     * @throws Exception
+     */
+    @Bean
+    public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration) throws Exception{
+        return authenticationConfiguration.getAuthenticationManager();
+    }
+
+    /**
      * metodo per configurare i filtri sulla sicurezza
      * @param http
      * @return di un filtro che permette tutti gli accessi in /api/bins/** e chiedere autenticazione in /api/users/**
@@ -37,40 +54,36 @@ public class SecurityConfig {
     @Bean
     SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
 
-        return http.csrf().disable() // csrf: cross side request forgery: vulnerabilità dove i browser conservano
-                                        // i cookie al loro interno
-                .authorizeHttpRequests()
-                .requestMatchers("/api/users/**").authenticated() // tutte le richieste che matchano il path devonono
-                                                                        // essere autenticate (con "**" và beep di 2 livelli)
-                .and()
-                .authorizeHttpRequests()
-                .requestMatchers("/api/bins/**").permitAll() // tutto quello che sta in questo path non ha resscrizioni
-                                                                // di autenticazione
-                .and()
-                .httpBasic(Customizer.withDefaults())       // autenticazione tramite username e password nell'header
-                .build();
+        http.csrf().disable() // csrf: cross side request forgery: vulnerabilità dove i browser conservano i cookie
+            .authorizeRequests()
+            .requestMatchers("/api/users/authenticate").permitAll() // filtra le richieste che matchano il path (authorized url)
+            .requestMatchers("/api/users/register").permitAll().
+            anyRequest().authenticated().and().sessionManagement()
+            .sessionCreationPolicy(SessionCreationPolicy.STATELESS); // creazione sessione stateless
+
+        // aggiunta del filtro
+        http.addFilterBefore(jwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);
+        return http.build();
     }
 
     /**
-     * metodo mock per creare degli utenti con username, password, roles
-     * @return di InMemoryUserDetailsManager per fare lo storage delle info di autenticazione degli utenti
+     * metodo per creare un oggetto che usa un filtro una sola volta in una sola richesta
+     * @return oggetto che usa il filtro
      */
     @Bean
-    public UserDetailsService userDetailsService(){
+    public JwtAuthenticationFilter jwtAuthenticationFilter(){
+        return new JwtAuthenticationFilter();
+    }
 
-        // mock users:
-        UserDetails jhonny = User.builder()
-                .username("Jhonny")
-                .password(passwordEncoder().encode("123"))
-                .roles("ADMIN")
-                .build();
-
-        UserDetails caca = User.builder()
-                .username("Caca")
-                .password(passwordEncoder().encode("123"))
-                .roles("USER")
-                .build();
-
-        return new InMemoryUserDetailsManager(jhonny, caca);
+    /**
+     * metodo per l'autenticazione dello user passato per @Autowire
+     * @return provider dell'autorizzazione
+     */
+    @Bean
+    public DaoAuthenticationProvider authProvider() {
+        DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider();
+        authProvider.setUserDetailsService(customUserDetailsService);
+        authProvider.setPasswordEncoder(passwordEncoder());
+        return authProvider;
     }
 }

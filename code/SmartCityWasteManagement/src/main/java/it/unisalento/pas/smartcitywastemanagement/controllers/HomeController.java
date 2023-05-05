@@ -2,7 +2,6 @@ package it.unisalento.pas.smartcitywastemanagement.controllers;
 
 import it.unisalento.pas.smartcitywastemanagement.configuration.IoTprotocol;
 import it.unisalento.pas.smartcitywastemanagement.di.IDBConnection;
-import it.unisalento.pas.smartcitywastemanagement.di.MySQLDBConnection;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -24,9 +23,8 @@ public class HomeController {
     @Autowired
     IoTprotocol tcpProtocol;
 
-    @RequestMapping("/home")            // per mappare a "/home" le chiamate nella funzione
+    @RequestMapping("/home") // per mappare a "/home" le chiamate nella funzione
     public String home(){
-
         mySQLDBConnection.connect();
         mongoDBConnection.connect();
         tcpProtocol.initialize();

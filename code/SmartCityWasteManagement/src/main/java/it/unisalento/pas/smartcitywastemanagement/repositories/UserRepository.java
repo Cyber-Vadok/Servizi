@@ -8,8 +8,8 @@ import java.util.List;
 /**
  * interfaccia per effettuare le query riguardanti user, nel database
  */
-
 public interface UserRepository extends MongoRepository<User, String> {
 
     public List<User> findBySurname(String surname);
+    public User findByUsername(String username);
 }

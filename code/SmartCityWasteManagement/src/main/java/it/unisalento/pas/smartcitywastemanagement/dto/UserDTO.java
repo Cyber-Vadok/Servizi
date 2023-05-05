@@ -6,7 +6,6 @@ import org.springframework.data.annotation.Id;
  * classe per quello che voglio trasmettere di quell'entità (user) dato che non sempre volgio salvare tutto di
  * un'entità e nello stesso formato
  */
-
 public class UserDTO {
 
     @Id
@@ -15,6 +14,24 @@ public class UserDTO {
     private String surname;
     private String email;
     private Integer age;
+    private String username;
+    private String password;
+
+    public String getUsername() {
+        return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
 
     public String getId() {
         return id;
@@ -44,7 +61,6 @@ public class UserDTO {
         return email;
     }
 
-    // @NotEmpty(message="Email var is mandatory")
     public void setEmail(String email) {
         this.email = email;
     }

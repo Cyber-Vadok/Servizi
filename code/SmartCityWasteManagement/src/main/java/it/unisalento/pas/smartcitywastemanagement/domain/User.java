@@ -7,7 +7,6 @@ import org.springframework.data.mongodb.core.mapping.Document;
  * classe definita come documento chiamato "user" (riga per le tabelle degli SQL) di MongoDB) (@Document)
  * (entità che voglio rappresentare nel db)
  */
-
 @Document("user")
 public class User {
 
@@ -17,6 +16,24 @@ public class User {
     String surname;
     String email;
     Integer age;
+    String username;
+    String password;
+
+    public String getUsername() {
+        return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
 
     public String getId() {
         return id;
